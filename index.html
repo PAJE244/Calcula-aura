@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Calculadora de Aura</title>
+
+<style>
+
+body{
+
+background:black;
+color:white;
+font-family:Arial;
+text-align:center;
+margin-top:50px;
+
+}
+
+textarea{
+
+width:300px;
+height:100px;
+
+}
+
+button{
+
+margin-top:10px;
+padding:10px;
+
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>Calculadora de Perca de Aura</h1>
+
+<textarea id="txt"></textarea><br>
+
+<button onclick="calcular()">Calcular</button>
+
+<div id="resp"></div>
+
+<script>
+
+async function calcular(){
+
+let texto = document.getElementById("txt").value;
+
+document.getElementById("resp").innerHTML="Analisando...";
+
+try{
+
+let res = await fetch("/aura",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+texto:texto
+
+})
+
+});
+
+let data = await res.json();
+
+document.getElementById("resp").innerHTML=
+data.choices[0].message.content;
+
+}catch{
+
+document.getElementById("resp").innerHTML=
+"Perda de -5000 aura. Nível: severo.";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
