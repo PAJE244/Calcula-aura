@@ -1,5 +1,6 @@
 const express = require("express");
 const fetch = require("node-fetch");
+
 const app = express();
 
 app.use(express.json());
@@ -10,6 +11,8 @@ const API_KEY = "sk-proj-BC7sW3_-bS5fII9WPvfC-id5D3a-BPRB70e_um1zrPzuJTpjeZC8z0C
 app.post("/aura", async (req, res) => {
 
 try{
+
+const situacao = req.body.texto;
 
 const response = await fetch("https://api.openai.com/v1/chat/completions",{
 
@@ -28,17 +31,35 @@ messages:[
 
 {
 role:"system",
-content:"Você é uma calculadora de perda de aura meme. Sempre responda com análise, perda negativa entre -4000 e -9000 e nível."
+content:
+`Você é uma calculadora de perda de aura estilo meme, mas analisa a situação de forma inteligente.
+
+REGRAS:
+
+- analise o contexto
+- calcule uma perda entre -3000 e -9000
+- quanto mais vergonhoso, maior a perda
+- gere um valor diferente cada vez
+- nunca repita resposta
+- responda exatamente neste formato:
+
+Análise: ...
+
+Motivo: ...
+
+Perda de aura: -XXXX
+
+Nível: ...`
 },
 
 {
 role:"user",
-content:req.body.texto
+content:situacao
 }
 
 ],
 
-temperature:1
+temperature:1.2
 
 })
 
@@ -48,16 +69,34 @@ const data = await response.json();
 
 res.json(data);
 
-}catch{
+}catch(e){
+
+// fallback variável
+
+const perda = Math.floor(Math.random() * 6000) + 3000;
 
 res.json({
 
 choices:[
+
 {
+
 message:{
-content:"Erro espiritual crítico. Perda de -6666 aura. Nível: Catastrófico."
+
+content:
+
+`Análise: Falha espiritual detectada.
+
+Motivo: O universo rejeitou sua presença.
+
+Perda de aura: -${perda}
+
+Nível: Catastrófico`
+
 }
+
 }
+
 ]
 
 });
@@ -68,6 +107,6 @@ content:"Erro espiritual crítico. Perda de -6666 aura. Nível: Catastrófico."
 
 app.listen(3000, ()=>{
 
-console.log("Servidor rodando");
+console.log("Servidor rodando em http://localhost:3000");
 
 });
